@@ -13,3 +13,5 @@
 - n8n automation is triggered from `submitLead` only when `N8N_WEBHOOK_URL` (and optional `N8N_WEBHOOK_SECRET`) secrets exist; lead id is sent as Idempotency-Key so retries don't duplicate.
 - Brand contact, URLs, WhatsApp flag and image sources live only in `src/config/brand.ts` so content swaps never touch components.
 - `submitLead` treats only an identical inquiry from the same email within 10 minutes as a duplicate and tells the user; n8n delivery status is written to `lead_status`/`automation_error`.
+- Brand photos are the brand's own amrinkhan.com images stored as CDN assets (`src/assets/brand/*.asset.json`) at native resolution; never upscale.
+- All buttons use `LuxButton` (variants in `src/styles.css` under `@layer components` so Tailwind utilities like `hidden` still win); scroll reveals use `Reveal`/`useReveal` with IntersectionObserver and respect reduced motion.

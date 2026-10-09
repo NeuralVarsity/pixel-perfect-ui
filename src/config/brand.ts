@@ -1,9 +1,18 @@
-// Central brand configuration. All URLs below were verified on amrinkhan.com (Oct 2026).
-import heroImg from "@/assets/hero.jpg";
-import sareeImg from "@/assets/saree.jpg";
-import menswearImg from "@/assets/menswear.jpg";
-import detailImg from "@/assets/detail.jpg";
-import contemporaryImg from "@/assets/contemporary.jpg";
+// Central brand configuration. URLs verified on amrinkhan.com (Oct 2026).
+// Images are Amrin Khan's own photography as published on amrinkhan.com, re-encoded to WebP at native resolution (never upscaled).
+import heroDesktop from "@/assets/brand/hero-desktop.webp.asset.json";
+import heroMobile from "@/assets/brand/hero-mobile.webp.asset.json";
+import craftWide from "@/assets/brand/craft-wide.webp.asset.json";
+import craftGroup from "@/assets/brand/craft-group.webp.asset.json";
+import campaignRed from "@/assets/brand/campaign-red.webp.asset.json";
+import galicha from "@/assets/brand/galicha.webp.asset.json";
+import ruksati from "@/assets/brand/ruksati.webp.asset.json";
+import couture from "@/assets/brand/couture.webp.asset.json";
+import ibtida from "@/assets/brand/ibtida.webp.asset.json";
+import lehenga from "@/assets/brand/lehenga.webp.asset.json";
+import saree from "@/assets/brand/saree.webp.asset.json";
+import contemporary from "@/assets/brand/contemporary.webp.asset.json";
+import sherwani from "@/assets/brand/sherwani.webp.asset.json";
 
 export const SITE = "https://amrinkhan.com";
 export const PHONE = "+91 98246 77719";
@@ -57,15 +66,26 @@ export const COLLECTIONS: [string, string][] = [
   ["Couture", "/couture-"],
 ];
 
-/**
- * Images. TEMPORARY: these are AI-generated previews, NOT authentic Amrin Khan photography.
- * Replace `src` with authorised campaign/product images (keep similar aspect ratios).
- */
+export type BrandImage = { src: string; w: number; h: number; alt: string; position?: string };
+const img = (a: { url: string }, w: number, h: number, alt: string, position?: string): BrandImage => ({ src: a.url, w, h, alt, ...(position ? { position } : {}) });
+
 export const IMAGES = {
-  hero: { src: heroImg, w: 1920, h: 1088, alt: "Bride in a burgundy lehenga with gold embroidery (preview image)", position: "70% center" },
-  lehenga: { src: heroImg, w: 1920, h: 1088, alt: "Lehenga (preview image)" },
-  saree: { src: sareeImg, w: 832, h: 1152, alt: "Saree (preview image)" },
-  contemporary: { src: contemporaryImg, w: 832, h: 1152, alt: "Contemporary wear (preview image)" },
-  menswear: { src: menswearImg, w: 832, h: 1152, alt: "Men's sherwani (preview image)" },
-  detail: { src: detailImg, w: 1152, h: 832, alt: "Close-up of hand embroidery (preview image)" },
+  heroDesktop: img(heroDesktop, 2000, 980, "Amrin Khan bridal couture campaign — brides in red lehengas with grooms in ivory sherwanis", "50% 35%"),
+  heroMobile: img(heroMobile, 700, 980, "Amrin Khan bridal couture campaign", "50% 30%"),
+  craftWide: img(craftWide, 2000, 980, "Models in embellished blush Amrin Khan lehengas in a heritage courtyard", "60% 40%"),
+  craftGroup: img(craftGroup, 2000, 980, "Brides in red embroidered Amrin Khan lehengas on a palace terrace", "50% 30%"),
+  campaignRed: img(campaignRed, 800, 559, "Amrin Khan couture campaign in a candlelit setting"),
+  galicha: img(galicha, 800, 559, "Ivory embellished Amrin Khan lehenga"),
+  ruksati: img(ruksati, 800, 559, "Ruksati — bride in a red lehenga on marigold-lined steps"),
+  couture: img(couture, 800, 559, "Couture — red bridal lehenga with embroidered dupatta"),
+  ibtida: img(ibtida, 800, 559, "Ibtida — embroidered lehenga with veil"),
+  lehenga: img(lehenga, 600, 444, "Ivory and gold Amrin Khan lehenga"),
+  saree: img(saree, 600, 444, "Amrin Khan pre-draped saree in wine and blush"),
+  contemporary: img(contemporary, 600, 444, "Amrin Khan contemporary skirt set with ruffled detail"),
+  sherwani: img(sherwani, 600, 444, "Amrin Khan ivory embroidered sherwani"),
 };
+
+export const SOCIAL = [
+  ["Instagram", "https://www.instagram.com/amrinkhanofficial/"],
+  ["Facebook", "https://www.facebook.com/amrinkhanflagshipstore/"],
+] as const;
