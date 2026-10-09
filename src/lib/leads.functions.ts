@@ -69,14 +69,14 @@ export const submitLead = createServerFn({ method: "POST" })
     if (error || !inserted) throw new Error("We couldn't save your inquiry. Please try again.");
 
     // Optional n8n automation — only if configured
-    const hook = process.env.N8N_WEBHOOK_URL;
+    const hook = process.env["N8N_WEBHOOK_URL"];
     if (hook) {
       try {
         const res = await fetch(hook, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...(process.env.N8N_WEBHOOK_SECRET ? { "X-Webhook-Secret": process.env.N8N_WEBHOOK_SECRET } : {}),
+            ...(process.env["N8N_WEBHOOK_SECRET"] ? { "X-Webhook-Secret": process.env["N8N_WEBHOOK_SECRET"] } : {}),
             "Idempotency-Key": inserted.id,
           },
           body: JSON.stringify({ id: inserted.id, ...row }),

@@ -194,9 +194,9 @@ function Consultation() {
     const v = Object.fromEntries(fd.entries()) as Record<string, string>;
     const errs: Record<string, string> = {};
     for (const k of ["full_name", "phone", "email", "city", "country", "occasion", "category_interest", "contact_method", "preferred_language"]) if (!v[k]?.trim()) errs[k] = "Required";
-    if (v.phone && !/^\+\d[\d\s-]{6,18}$/.test(v.phone.trim())) errs.phone = "Include country code, e.g. +91 98…";
-    if (v.email && !/^\S+@\S+\.\S+$/.test(v.email)) errs.email = "Enter a valid email";
-    if (!fd.get("consent")) errs.consent = "Please confirm consent";
+    if (v["phone"] && !/^\+\d[\d\s-]{6,18}$/.test(v["phone"].trim())) errs["phone"] = "Include country code, e.g. +91 98…";
+    if (v["email"] && !/^\S+@\S+\.\S+$/.test(v["email"])) errs["email"] = "Enter a valid email";
+    if (!fd.get("consent")) errs["consent"] = "Please confirm consent";
     setErrors(errs);
     if (Object.keys(errs).length) return;
     setStatus({ kind: "loading" });
@@ -204,7 +204,7 @@ function Consultation() {
       const campaign = new URLSearchParams(window.location.search).get("utm_campaign") ?? "";
       const res = await submitLead({ data: { ...v, consent: true, campaign } as never });
       setStatus({ kind: "ok", duplicate: res.duplicate });
-      track("lead_submitted", { occasion: v.occasion, category: v.category_interest });
+      track("lead_submitted", { occasion: v["occasion"], category: v["category_interest"] });
       form.reset();
     } catch {
       setStatus({ kind: "error", msg: "We couldn't send your inquiry. Please try again, or call us directly." });
@@ -236,21 +236,21 @@ function Consultation() {
         ) : (
           <form onSubmit={onSubmit} noValidate className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
             <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
-            <Field label="Full name" name="full_name" err={errors.full_name} autoComplete="name" />
-            <Field label="Phone (with country code)" name="phone" type="tel" placeholder="+91" err={errors.phone} autoComplete="tel" />
-            <Field label="Email" name="email" type="email" err={errors.email} autoComplete="email" />
-            <Field label="City" name="city" err={errors.city} autoComplete="address-level2" />
-            <Field label="Country" name="country" err={errors.country} autoComplete="country-name" />
-            <SelectField label="Occasion" name="occasion" options={OCCASIONS} err={errors.occasion} />
-            <SelectField label="Interested in" name="category_interest" options={CATEGORIES} err={errors.category_interest} />
+            <Field label="Full name" name="full_name" err={errors["full_name"]} autoComplete="name" />
+            <Field label="Phone (with country code)" name="phone" type="tel" placeholder="+91" err={errors["phone"]} autoComplete="tel" />
+            <Field label="Email" name="email" type="email" err={errors["email"]} autoComplete="email" />
+            <Field label="City" name="city" err={errors["city"]} autoComplete="address-level2" />
+            <Field label="Country" name="country" err={errors["country"]} autoComplete="country-name" />
+            <SelectField label="Occasion" name="occasion" options={OCCASIONS} err={errors["occasion"]} />
+            <SelectField label="Interested in" name="category_interest" options={CATEGORIES} err={errors["category_interest"]} />
             <SelectField label="Preferred collection (optional)" name="collection_interest" options={COLLECTIONS} optional />
             <Field label="Event date (optional)" name="event_date" type="date" />
             <SelectField label="Approximate budget (optional)" name="budget_range" options={BUDGETS} optional />
-            <SelectField label="Preferred contact" name="contact_method" options={CONTACT_METHODS} err={errors.contact_method} />
-            <SelectField label="Preferred language" name="preferred_language" options={["English", "Hindi", "Gujarati", "Urdu", "Other"]} err={errors.preferred_language} />
+            <SelectField label="Preferred contact" name="contact_method" options={CONTACT_METHODS} err={errors["contact_method"]} />
+            <SelectField label="Preferred language" name="preferred_language" options={["English", "Hindi", "Gujarati", "Urdu", "Other"]} err={errors["preferred_language"]} />
             <label className="flex items-start gap-3 text-sm text-muted-foreground sm:col-span-2">
               <input type="checkbox" name="consent" className="mt-1 accent-[var(--primary)]" />
-              <span>I agree to be contacted by Amrin Khan about this inquiry. My details are used only to respond and are never sold.{errors.consent && <span className="block text-destructive">{errors.consent}</span>}</span>
+              <span>I agree to be contacted by Amrin Khan about this inquiry. My details are used only to respond and are never sold.{errors["consent"] && <span className="block text-destructive">{errors["consent"]}</span>}</span>
             </label>
             {status.kind === "error" && <p role="alert" className="text-sm text-destructive sm:col-span-2">{status.msg}</p>}
             <button type="submit" disabled={status.kind === "loading"} className="btn-lux bg-primary text-primary-foreground hover:bg-ink disabled:opacity-60 sm:col-span-2 sm:justify-self-start">
@@ -265,7 +265,7 @@ function Consultation() {
 
 const BUDGETS = ["Under ₹1,00,000", "₹1,00,000 – ₹3,00,000", "₹3,00,000 – ₹6,00,000", "Above ₹6,00,000", "Prefer to discuss"];
 
-function Field({ label, name, err, ...rest }: { label: string; name: string; err?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({ label, name, err, ...rest }: { label: string; name: string; err?: string | undefined } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
       <span className="eyebrow text-muted-foreground">{label}</span>
@@ -275,7 +275,7 @@ function Field({ label, name, err, ...rest }: { label: string; name: string; err
   );
 }
 
-function SelectField({ label, name, options, err, optional }: { label: string; name: string; options: readonly string[]; err?: string; optional?: boolean }) {
+function SelectField({ label, name, options, err, optional }: { label: string; name: string; options: readonly string[]; err?: string | undefined; optional?: boolean }) {
   return (
     <label className="block">
       <span className="eyebrow text-muted-foreground">{label}</span>
