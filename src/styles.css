@@ -142,6 +142,7 @@
 }
 @utility img-zoom { transition: transform 1.6s cubic-bezier(.2,.7,.2,1); }
 
+@layer components {
 /* Buttons */
 .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .75rem; min-height: 3.25rem; padding: 0 2.25rem; border-radius: 2px;
   font-family: var(--font-sans); font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; font-weight: 400; isolation: isolate; overflow: hidden;
@@ -184,6 +185,8 @@
 .faq-panel[data-open="true"] { grid-template-rows: 1fr; }
 .drawer { transition: opacity .5s ease, visibility .5s; }
 .drawer[data-open="false"] { opacity: 0; visibility: hidden; }
+
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
