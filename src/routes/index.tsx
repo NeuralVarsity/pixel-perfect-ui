@@ -162,7 +162,7 @@ function Story() {
   );
 }
 
-type Status = { kind: "idle" } | { kind: "loading" } | { kind: "ok"; duplicate: boolean } | { kind: "error"; msg: string };
+type Status = { kind: "idle" } | { kind: "loading" } | { kind: "ok" } | { kind: "error"; msg: string };
 
 function Consultation() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -185,7 +185,16 @@ function Consultation() {
     try {
       const campaign = new URLSearchParams(window.location.search).get("utm_campaign") ?? "";
       const res = await submitLead({ data: { ...v, consent: true, campaign } as never });
-      setStatus({ kind: "ok", duplicate: res.duplicate });
+      if (!res.ok) {
+        setStatus({
+          kind: "error",
+          msg: res.reason === "duplicate"
+            ? "We've already received this exact inquiry in the last few minutes — no need to resend. Our team will be in touch. To add details, please call or email us."
+            : "You've sent several inquiries in a short time. Please wait a few minutes, or call or email us directly.",
+        });
+        return;
+      }
+      setStatus({ kind: "ok" });
       track("lead_submitted", { occasion: v["occasion"], category: v["category_interest"] });
       form.reset();
     } catch {
@@ -209,9 +218,7 @@ function Consultation() {
             <p className="eyebrow text-primary">Inquiry received</p>
             <h3 className="mt-4 text-4xl">Thank you.</h3>
             <p className="mt-4 text-muted-foreground">
-              {status.duplicate
-                ? "We already have your recent inquiry — our team will be in touch shortly."
-                : "Your inquiry has been received. Our team will contact you through your preferred channel to arrange a consultation."}
+              {"Your inquiry has been received. Our team will contact you through your preferred channel to arrange a consultation."}
             </p>
             <button onClick={() => setStatus({ kind: "idle" })} className="eyebrow mt-8 self-start border-b border-foreground/30 pb-1">Send another inquiry</button>
           </div>
