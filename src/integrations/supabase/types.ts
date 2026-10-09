@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      fashion_leads: {
+        Row: {
+          automation_error: string | null
+          budget_range: string | null
+          campaign: string | null
+          category_interest: string
+          city: string
+          collection_interest: string | null
+          consent: boolean
+          contact_method: string
+          country: string
+          created_at: string
+          email: string
+          event_date: string | null
+          full_name: string
+          id: string
+          lead_source: string
+          lead_status: string
+          occasion: string
+          phone: string
+          preferred_language: string
+        }
+        Insert: {
+          automation_error?: string | null
+          budget_range?: string | null
+          campaign?: string | null
+          category_interest: string
+          city: string
+          collection_interest?: string | null
+          consent?: boolean
+          contact_method: string
+          country: string
+          created_at?: string
+          email: string
+          event_date?: string | null
+          full_name: string
+          id?: string
+          lead_source?: string
+          lead_status?: string
+          occasion: string
+          phone: string
+          preferred_language: string
+        }
+        Update: {
+          automation_error?: string | null
+          budget_range?: string | null
+          campaign?: string | null
+          category_interest?: string
+          city?: string
+          collection_interest?: string | null
+          consent?: boolean
+          contact_method?: string
+          country?: string
+          created_at?: string
+          email?: string
+          event_date?: string | null
+          full_name?: string
+          id?: string
+          lead_source?: string
+          lead_status?: string
+          occasion?: string
+          phone?: string
+          preferred_language?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
