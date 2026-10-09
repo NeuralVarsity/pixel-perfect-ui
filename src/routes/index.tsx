@@ -164,7 +164,7 @@ function Categories() {
                 <span className="font-serif text-sm italic text-gold">{f.no}</span>
                 <span className="eyebrow text-muted-foreground">{f.label}</span>
               </div>
-              <h3 className="display mt-5 text-6xl md:text-7xl">{f.title}</h3>
+              <h3 className="display mt-5 text-5xl sm:text-6xl md:text-7xl">{f.title}</h3>
               <p className="mt-5 max-w-xs text-muted-foreground">{f.note}</p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <LuxButton href={f.href} target="_blank" rel="noreferrer" variant="text" arrow className="text-foreground">Explore</LuxButton>
