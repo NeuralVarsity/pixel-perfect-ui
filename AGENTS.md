@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Lead form writes to `fashion_leads` only via the `submitLead` server function (admin client); the table has RLS with no public policies so visitors can never read leads.
+- n8n automation is triggered from `submitLead` only when `N8N_WEBHOOK_URL` (and optional `N8N_WEBHOOK_SECRET`) secrets exist; lead id is sent as Idempotency-Key so retries don't duplicate.
+- WhatsApp CTA is gated by `WHATSAPP_ENABLED` in the landing route until the brand confirms the number.
+- Garment images in src/assets are generated placeholders; replace with authorised brand photography.

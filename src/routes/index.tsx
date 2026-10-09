@@ -189,7 +189,8 @@ function Consultation() {
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status.kind === "loading") return;
-    const fd = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
     const v = Object.fromEntries(fd.entries()) as Record<string, string>;
     const errs: Record<string, string> = {};
     for (const k of ["full_name", "phone", "email", "city", "country", "occasion", "category_interest", "contact_method", "preferred_language"]) if (!v[k]?.trim()) errs[k] = "Required";
@@ -204,7 +205,7 @@ function Consultation() {
       const res = await submitLead({ data: { ...v, consent: true, campaign } as never });
       setStatus({ kind: "ok", duplicate: res.duplicate });
       track("lead_submitted", { occasion: v.occasion, category: v.category_interest });
-      e.currentTarget?.reset?.();
+      form.reset();
     } catch {
       setStatus({ kind: "error", msg: "We couldn't send your inquiry. Please try again, or call us directly." });
     }
