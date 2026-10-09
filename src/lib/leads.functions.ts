@@ -30,19 +30,26 @@ export type LeadInput = z.input<typeof leadSchema>;
 export const submitLead = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => leadSchema.parse(d))
   .handler(async ({ data }) => {
-    if (data.website) return { ok: true as const, duplicate: false };
+    if (data.website) return { ok: true as const }; // honeypot: silently drop bots
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const email = data.email.toLowerCase();
 
-    // Duplicate / rate limit: same email within last 10 minutes
+    // Rate limit + duplicate check (10-minute window, by email).
+    // Only an IDENTICAL inquiry (same occasion + category + collection) counts as a duplicate;
+    // a different inquiry from the same person is still saved. More than 3 per window is rate-limited.
     const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    const { count, error: cErr } = await supabaseAdmin
+    const { data: recent, error: cErr } = await supabaseAdmin
       .from("fashion_leads")
-      .select("id", { count: "exact", head: true })
+      .select("occasion, category_interest, collection_interest")
       .ilike("email", email)
-      .gte("created_at", since);
+      .gte("created_at", since)
+      .limit(10);
     if (cErr) throw new Error("We couldn't save your inquiry. Please try again.");
-    if ((count ?? 0) > 0) return { ok: true as const, duplicate: true };
+    const coll = data.collection_interest || null;
+    if ((recent ?? []).some((r) => r.occasion === data.occasion && r.category_interest === data.category_interest && r.collection_interest === coll)) {
+      return { ok: false as const, reason: "duplicate" as const };
+    }
+    if ((recent ?? []).length >= 3) return { ok: false as const, reason: "rate_limited" as const };
 
     const row = {
       full_name: data.full_name,
@@ -68,27 +75,34 @@ export const submitLead = createServerFn({ method: "POST" })
       .single();
     if (error || !inserted) throw new Error("We couldn't save your inquiry. Please try again.");
 
-    // Optional n8n automation — only if configured
+    // n8n forwarding — runs only after a successful insert and only when configured.
     const hook = process.env["N8N_WEBHOOK_URL"];
-    if (hook) {
-      try {
-        const res = await fetch(hook, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(process.env["N8N_WEBHOOK_SECRET"] ? { "X-Webhook-Secret": process.env["N8N_WEBHOOK_SECRET"] } : {}),
-            "Idempotency-Key": inserted.id,
-          },
-          body: JSON.stringify({ id: inserted.id, ...row }),
-        });
-        if (!res.ok) throw new Error(`n8n ${res.status}`);
-        await supabaseAdmin.from("fashion_leads").update({ lead_status: "automation_sent" }).eq("id", inserted.id);
-      } catch (e) {
-        await supabaseAdmin
-          .from("fashion_leads")
-          .update({ automation_error: String(e).slice(0, 500) })
-          .eq("id", inserted.id);
+    const secret = process.env["N8N_WEBHOOK_SECRET"];
+    if (!hook || !secret) {
+      await supabaseAdmin.from("fashion_leads").update({ lead_status: "automation_pending_config" }).eq("id", inserted.id);
+    } else {
+      let lastErr = "";
+      let delivered = false;
+      for (let attempt = 1; attempt <= 3 && !delivered; attempt++) {
+        try {
+          const res = await fetch(hook, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Webhook-Secret": secret, "Idempotency-Key": inserted.id },
+            body: JSON.stringify({ id: inserted.id, ...row }),
+            signal: AbortSignal.timeout(8000),
+          });
+          if (res.ok) delivered = true;
+          else lastErr = `HTTP ${res.status}`;
+        } catch (e) {
+          lastErr = e instanceof Error ? e.name : "network_error";
+        }
+        if (!delivered && attempt < 3) await new Promise((r) => setTimeout(r, attempt * 500));
       }
+      await supabaseAdmin
+        .from("fashion_leads")
+        .update(delivered ? { lead_status: "automation_sent", automation_error: null } : { lead_status: "automation_failed", automation_error: lastErr.slice(0, 200) })
+        .eq("id", inserted.id);
+      if (!delivered) console.error("n8n forwarding failed", { lead: inserted.id, error: lastErr });
     }
-    return { ok: true as const, duplicate: false };
+    return { ok: true as const };
   });

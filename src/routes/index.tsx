@@ -1,24 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { Phone, Mail, ArrowRight, Loader2 } from "lucide-react";
-import hero from "@/assets/hero.jpg";
-import saree from "@/assets/saree.jpg";
-import menswear from "@/assets/menswear.jpg";
-import detail from "@/assets/detail.jpg";
-import contemporary from "@/assets/contemporary.jpg";
+import { SITE, PHONE, PHONE_TEL, EMAIL, WHATSAPP, whatsappUrl, LINKS, WOMEN, MEN, COLLECTIONS, IMAGES } from "@/config/brand";
 import { submitLead, OCCASIONS, CATEGORIES, CONTACT_METHODS } from "@/lib/leads.functions";
 import { track } from "@/lib/track";
-
-const SITE = "https://amrinkhan.com";
-const PHONE = "+91 98246 77719";
-const PHONE_TEL = "+919824677719";
-const EMAIL = "info@amrinkhan.com";
-// Enable only after the brand confirms this number is active on WhatsApp.
-const WHATSAPP_ENABLED = false;
-const WA_MSG = encodeURIComponent(
-  "Hello Amrin Khan team, I'd like to enquire about your couture collections for an upcoming occasion.",
-);
-const search = (q: string) => `${SITE}/search?q=${encodeURIComponent(q)}`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,14 +26,11 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const WOMEN = ["Lehengas", "Sarees", "Contemporary Wear", "Kurta Sets", "Jacket Sets", "Pant Sets", "Skirt Sets", "Gowns", "Anarkali Sets", "Jumpsuits"];
-const MEN = ["Sherwani Sets", "Jacket Sets", "Kurta Sets"];
-const COLLECTIONS = ["NAYAB", "KAHANIYAAN", "Tassavur", "Ibtida", "Ruksati", "Couture"];
 const FEATURED = [
-  { img: hero, title: "Lehengas", note: "Heirloom silhouettes for the bride and her celebrations.", q: "lehenga", cls: "md:col-span-2 md:row-span-2", w: 1920, h: 1088 },
-  { img: saree, title: "Sarees", note: "Six yards, quietly embellished.", q: "saree", cls: "", w: 832, h: 1152 },
-  { img: contemporary, title: "Contemporary Wear", note: "Capes, co-ords and modern drapes.", q: "contemporary", cls: "", w: 832, h: 1152 },
-  { img: menswear, title: "Men's Wear", note: "Sherwani, jacket and kurta sets.", q: "sherwani", cls: "md:col-span-2", w: 832, h: 1152 },
+  { img: IMAGES.lehenga, title: "Lehengas", note: "For the bride and her celebrations.", href: `${SITE}/womens-wear/lehenga`, cls: "md:col-span-2 md:row-span-2" },
+  { img: IMAGES.saree, title: "Sarees", note: "Occasion sarees.", href: `${SITE}/womens-wear/saree`, cls: "" },
+  { img: IMAGES.contemporary, title: "Contemporary Wear", note: "Modern silhouettes.", href: `${SITE}/womens-wear/contemporary`, cls: "" },
+  { img: IMAGES.menswear, title: "Men's Wear", note: "Sherwani, jacket and kurta sets.", href: LINKS.mens, cls: "md:col-span-2" },
 ];
 
 function Index() {
@@ -86,10 +68,10 @@ function Header() {
 function Hero() {
   return (
     <section id="top" className="relative flex min-h-screen items-end overflow-hidden bg-ink text-ink-foreground">
-      <img src={hero} alt="Bride in a burgundy lehenga with gold zardozi embroidery in a candlelit palace arch" width={1920} height={1088} className="absolute inset-0 h-full w-full object-cover object-[70%_center]" />
+      <img src={IMAGES.hero.src} alt={IMAGES.hero.alt} width={IMAGES.hero.w} height={IMAGES.hero.h} style={{ objectPosition: IMAGES.hero.position }} className="absolute inset-0 h-full w-full object-cover" />
       <div className="hero-overlay absolute inset-0" />
       <div className="relative mx-auto w-full max-w-7xl px-6 pb-24 md:px-10 md:pb-32">
-        <p className="eyebrow rise text-gold">Designer Couture · Ahmedabad</p>
+        <p className="eyebrow rise text-gold">Designer Couture · Since 2007</p>
         <h1 className="rise mt-6 max-w-3xl text-5xl leading-[1.02] md:text-7xl lg:text-8xl" style={{ animationDelay: ".15s" }}>
           An expression of your <em className="text-gold">extraordinary.</em>
         </h1>
@@ -113,13 +95,13 @@ function Collections() {
           <p className="eyebrow text-primary">The Collections</p>
           <h2 className="mt-4 text-4xl md:text-6xl">Dressed for the moments<br />that become memories.</h2>
         </div>
-        <a href={SITE} target="_blank" rel="noreferrer" className="eyebrow flex items-center gap-2 border-b border-foreground/30 pb-1">View the full store <ArrowRight className="h-3 w-3" /></a>
+        <a href={LINKS.collections} target="_blank" rel="noreferrer" className="eyebrow flex items-center gap-2 border-b border-foreground/30 pb-1">View the full store <ArrowRight className="h-3 w-3" /></a>
       </div>
 
       <div className="mt-16 grid auto-rows-[340px] gap-4 md:grid-cols-4">
         {FEATURED.map((f) => (
-          <a key={f.title} href={search(f.q)} target="_blank" rel="noreferrer" className={`group relative overflow-hidden bg-ink ${f.cls}`}>
-            <img src={f.img} alt={`${f.title} by Amrin Khan`} loading="lazy" width={f.w} height={f.h} className="h-full w-full object-cover transition duration-[1.4s] group-hover:scale-105" />
+          <a key={f.title} href={f.href} target="_blank" rel="noreferrer" className={`group relative overflow-hidden bg-ink ${f.cls}`}>
+            <img src={f.img.src} alt={f.img.alt} loading="lazy" width={f.img.w} height={f.img.h} className="h-full w-full object-cover transition duration-[1.4s] group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-6 text-ink-foreground">
               <h3 className="text-3xl">{f.title}</h3>
@@ -136,8 +118,8 @@ function Collections() {
         <div>
           <p className="eyebrow text-primary">Named Collections</p>
           <ul className="mt-6 space-y-3">
-            {COLLECTIONS.map((c) => (
-              <li key={c}><a href={search(c)} target="_blank" rel="noreferrer" className="font-serif text-2xl italic transition hover:text-primary">{c}</a></li>
+            {COLLECTIONS.map(([c, path]) => (
+              <li key={c}><a href={`${SITE}${path}`} target="_blank" rel="noreferrer" className="font-serif text-2xl italic transition hover:text-primary">{c}</a></li>
             ))}
           </ul>
         </div>
@@ -146,13 +128,13 @@ function Collections() {
   );
 }
 
-function CatList({ title, items }: { title: string; items: string[] }) {
+function CatList({ title, items }: { title: string; items: [string, string][] }) {
   return (
     <div>
       <p className="eyebrow text-primary">{title}</p>
       <ul className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
-        {items.map((i) => (
-          <li key={i}><a href={search(i)} target="_blank" rel="noreferrer" className="border-b border-transparent hover:border-primary">{i}</a></li>
+        {items.map(([i, path]) => (
+          <li key={i + path}><a href={`${SITE}${path}`} target="_blank" rel="noreferrer" className="border-b border-transparent hover:border-primary">{i}</a></li>
         ))}
       </ul>
     </div>
@@ -163,15 +145,15 @@ function Story() {
   return (
     <section id="story" className="bg-primary text-primary-foreground">
       <div className="mx-auto grid max-w-7xl items-center gap-16 px-6 py-28 md:grid-cols-2 md:px-10">
-        <img src={detail} alt="Close-up of gold zari and pearl hand embroidery on burgundy velvet" loading="lazy" width={1152} height={832} className="aspect-[4/5] w-full object-cover" />
+        <img src={IMAGES.detail.src} alt={IMAGES.detail.alt} loading="lazy" width={IMAGES.detail.w} height={IMAGES.detail.h} className="aspect-[4/5] w-full object-cover" />
         <div>
           <p className="eyebrow text-gold">The Private Couture Experience</p>
           <h2 className="mt-6 text-4xl leading-tight md:text-5xl">Where Indian craft meets <em>contemporary</em> elegance.</h2>
           <p className="mt-8 max-w-md leading-relaxed opacity-85">
-            Every Amrin Khan piece begins with traditional Indian design — hand embroidery, rich textiles and considered silhouettes — reinterpreted for the way you celebrate today.
+            Since 2007, Vadodara-based designer Amrin Khan has created bespoke, glamorous and elegant clothing for men and women — blending old-world charm with a contemporary twist.
           </p>
           <p className="mt-4 max-w-md leading-relaxed opacity-85">
-            Our team guides you personally through the collections, helping you find the piece that suits your occasion.
+            Her designs weave together indigenous craft techniques, flattering silhouettes and meticulously detailed drapery, across couture, prêt-à-porter and occasion wear.
           </p>
           <a href="#consult" onClick={() => track("cta_consultation", { from: "story" })} className="btn-lux mt-10 border-gold text-gold hover:bg-gold hover:text-ink">Request a consultation</a>
         </div>
@@ -180,7 +162,7 @@ function Story() {
   );
 }
 
-type Status = { kind: "idle" } | { kind: "loading" } | { kind: "ok"; duplicate: boolean } | { kind: "error"; msg: string };
+type Status = { kind: "idle" } | { kind: "loading" } | { kind: "ok" } | { kind: "error"; msg: string };
 
 function Consultation() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
@@ -203,7 +185,16 @@ function Consultation() {
     try {
       const campaign = new URLSearchParams(window.location.search).get("utm_campaign") ?? "";
       const res = await submitLead({ data: { ...v, consent: true, campaign } as never });
-      setStatus({ kind: "ok", duplicate: res.duplicate });
+      if (!res.ok) {
+        setStatus({
+          kind: "error",
+          msg: res.reason === "duplicate"
+            ? "We've already received this exact inquiry in the last few minutes — no need to resend. Our team will be in touch. To add details, please call or email us."
+            : "You've sent several inquiries in a short time. Please wait a few minutes, or call or email us directly.",
+        });
+        return;
+      }
+      setStatus({ kind: "ok" });
       track("lead_submitted", { occasion: v["occasion"], category: v["category_interest"] });
       form.reset();
     } catch {
@@ -227,9 +218,7 @@ function Consultation() {
             <p className="eyebrow text-primary">Inquiry received</p>
             <h3 className="mt-4 text-4xl">Thank you.</h3>
             <p className="mt-4 text-muted-foreground">
-              {status.duplicate
-                ? "We already have your recent inquiry — our team will be in touch shortly."
-                : "Your inquiry has been received. Our team will contact you through your preferred channel to arrange a consultation."}
+              {"Your inquiry has been received. Our team will contact you through your preferred channel to arrange a consultation."}
             </p>
             <button onClick={() => setStatus({ kind: "idle" })} className="eyebrow mt-8 self-start border-b border-foreground/30 pb-1">Send another inquiry</button>
           </div>
@@ -243,7 +232,7 @@ function Consultation() {
             <Field label="Country" name="country" err={errors["country"]} autoComplete="country-name" />
             <SelectField label="Occasion" name="occasion" options={OCCASIONS} err={errors["occasion"]} />
             <SelectField label="Interested in" name="category_interest" options={CATEGORIES} err={errors["category_interest"]} />
-            <SelectField label="Preferred collection (optional)" name="collection_interest" options={COLLECTIONS} optional />
+            <SelectField label="Preferred collection (optional)" name="collection_interest" options={COLLECTIONS.map(([c]) => c)} optional />
             <Field label="Event date (optional)" name="event_date" type="date" />
             <SelectField label="Approximate budget (optional)" name="budget_range" options={BUDGETS} optional />
             <SelectField label="Preferred contact" name="contact_method" options={CONTACT_METHODS} err={errors["contact_method"]} />
@@ -288,10 +277,13 @@ function SelectField({ label, name, options, err, optional }: { label: string; n
   );
 }
 
-const FAQ = [
-  ["How does a private consultation work?", "Share your occasion and preferences through the form. Our team will reach out on your preferred channel to discuss suitable pieces from the collections."],
-  ["Can I shop online?", "Yes — the complete catalogue is available on the official Amrin Khan store at amrinkhan.com."],
-  ["Where can I read delivery and return policies?", "Please refer to the policy pages on amrinkhan.com, or ask our team during your consultation."],
+// Answers summarised from amrinkhan.com/faqs (verified Oct 2026).
+const FAQ: [string, string][] = [
+  ["Can I customise or personalise my order?", "Yes. Amrin Khan offers customisation — submit an inquiry or contact the team for guidance and availability."],
+  ["Can I modify or cancel an order?", "Orders enter production immediately once placed, so cancellations or changes can't be accommodated."],
+  ["Do you ship internationally?", "Domestic shipping within India is complimentary. International orders are not currently accepted; delivery to an address in India is possible."],
+  ["What is the estimated delivery time?", "Orders typically arrive within 4 to 6 weeks."],
+  ["What about returns and exchanges?", "Please refer to the official returns & exchange policy on amrinkhan.com, or ask our team."],
 ];
 
 function Contact() {
@@ -308,14 +300,15 @@ function Contact() {
               </details>
             ))}
           </div>
+          <a href={LINKS.faqs} target="_blank" rel="noreferrer" className="eyebrow mt-6 inline-block border-b border-foreground/30 pb-1">All FAQs</a>
         </div>
         <div>
           <p className="eyebrow text-primary">Speak with us</p>
           <div className="mt-8 space-y-6">
             <a href={`tel:${PHONE_TEL}`} onClick={() => track("cta_call", { from: "contact" })} className="flex items-center gap-4 font-serif text-2xl hover:text-primary"><Phone className="h-5 w-5 text-gold" />Request a call · {PHONE}</a>
             <a href={`mailto:${EMAIL}`} onClick={() => track("cta_email")} className="flex items-center gap-4 font-serif text-2xl hover:text-primary"><Mail className="h-5 w-5 text-gold" />{EMAIL}</a>
-            {WHATSAPP_ENABLED && (
-              <a href={`https://wa.me/${PHONE_TEL.slice(1)}?text=${WA_MSG}`} target="_blank" rel="noreferrer" onClick={() => track("cta_whatsapp")} className="block font-serif text-2xl hover:text-primary">Enquire on WhatsApp</a>
+            {WHATSAPP.enabled && (
+              <a href={whatsappUrl()} target="_blank" rel="noreferrer" onClick={() => track("cta_whatsapp")} className="block font-serif text-2xl hover:text-primary">Enquire on WhatsApp</a>
             )}
             <a href="#consult" className="btn-lux mt-4 bg-primary text-primary-foreground hover:bg-ink">Book a private consultation</a>
           </div>
@@ -335,7 +328,7 @@ function Footer() {
         </div>
         <div className="flex flex-wrap gap-8 eyebrow opacity-70">
           <a href={SITE} target="_blank" rel="noreferrer">Official store</a>
-          <a href={`${SITE}/policies/privacy-policy`} target="_blank" rel="noreferrer">Privacy</a>
+          <a href={LINKS.privacy} target="_blank" rel="noreferrer">Privacy</a>
           <a href={`mailto:${EMAIL}`}>Email</a>
         </div>
       </div>
