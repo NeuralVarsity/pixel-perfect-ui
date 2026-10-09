@@ -101,11 +101,11 @@ function Hero() {
       <div className="hero-overlay absolute inset-0" />
 
       <div className="relative mx-auto w-full max-w-[1500px] px-6 pb-20 pt-40 md:px-12 md:pb-28">
-        <div className="grid items-end gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <div className="grid items-end gap-10 lg:grid-cols-[1.7fr_1fr]">
           <div>
             <p className="eyebrow rise text-gold">Amrin Khan · Couture</p>
-            <h1 className="display rise mt-6 text-[13vw] sm:text-7xl lg:text-[8.5rem]" style={{ animationDelay: ".15s" }}>
-              An expression<br />of your <em className="text-gold">extra&shy;ordinary.</em>
+            <h1 className="display rise mt-6 text-[11.5vw] sm:text-7xl lg:text-[5.6rem] xl:text-[7rem] 2xl:text-[8rem]" style={{ animationDelay: ".15s" }}>
+              An expression<br />of your <em className="whitespace-nowrap text-gold">extraordinary.</em>
             </h1>
           </div>
           <div className="rise lg:pb-4" style={{ animationDelay: ".4s" }}>
@@ -152,14 +152,14 @@ function Categories() {
       <div className="mx-auto mt-20 max-w-[1500px] space-y-24 px-6 pb-28 md:mt-28 md:space-y-40 md:px-12 md:pb-40">
         {FEATURED.map((f, i) => (
           <article key={f.title} className={cn("grid items-center gap-8 md:grid-cols-12 md:gap-12", i % 2 && "md:[&>*:first-child]:order-2")}>
-            <Reveal img className={cn("md:col-span-7", i % 2 ? "md:col-start-6" : "")}>
+            <Reveal img className={cn("min-w-0 md:col-span-7", i % 2 ? "md:col-start-6" : "")}>
               <a href={f.href} target="_blank" rel="noreferrer" className="group block overflow-hidden bg-ink" aria-label={`Explore ${f.title}`}>
                 <div className="aspect-[4/3] max-w-[600px] overflow-hidden md:max-w-none">
                   <Photo img={f.img} sizes="(min-width: 768px) 600px, 100vw" className="img-zoom group-hover:scale-[1.04]" />
                 </div>
               </a>
             </Reveal>
-            <Reveal className={cn("md:col-span-5", i % 2 ? "md:pr-8" : "md:pl-8")} delay={150}>
+            <Reveal className={cn("min-w-0 md:col-span-5", i % 2 ? "md:pr-8" : "md:pl-8")} delay={150}>
               <div className="flex items-baseline gap-4">
                 <span className="font-serif text-sm italic text-gold">{f.no}</span>
                 <span className="eyebrow text-muted-foreground">{f.label}</span>
